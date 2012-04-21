@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: graphicsclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "graphicsclass.h"
+#include "../include/Renderer.h"
 
 
 using namespace pjs;
@@ -10,7 +10,6 @@ GraphicsClass::GraphicsClass()
 {
 	m_D3D = 0;
 	m_Camera = 0;
-	m_Model = 0;
 	m_TextureShader = 0;
 	m_Cloth = 0;
 }
@@ -55,21 +54,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(-1.0f, -60.0f, -100.0f);
-	
-	// Create the model object.
-	m_Model = new ModelClass;
-	if(!m_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	result = m_Model->Initialize(m_D3D->GetDevice());
-	if(!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
 
 	// Create the model object.
 	m_Cloth = new Cloth(25,20,3.0f);
@@ -79,7 +63,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = m_Cloth->Initialize(m_D3D->GetDevice(), L"../Engine/ukFlag.jpg");
+	result = m_Cloth->Initialize(m_D3D->GetDevice(), L"../Engine/textures/ukFlag.jpg");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the cloth object.", L"Error", MB_OK);
@@ -113,14 +97,6 @@ void GraphicsClass::Shutdown()
 		m_TextureShader->Shutdown();
 		delete m_TextureShader;
 		m_TextureShader = 0;
-	}
-
-	// Release the model object.
-	if(m_Model)
-	{
-		m_Model->Shutdown();
-		delete m_Model;
-		m_Model = 0;
 	}
 
 	if(m_Cloth)
@@ -182,7 +158,6 @@ bool GraphicsClass::Render()
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//m_Model->Render(m_D3D->GetDeviceContext());
 	m_Cloth->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.

@@ -8,12 +8,11 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "d3dclass.h"
-#include "cameraclass.h"
-#include "modelclass.h"
-#include "cloth.h"
-#include "solver.h"
-#include "textureshaderclass.h"
+#include "D3D.h"
+#include "Camera.h"
+#include "Cloth.h"
+#include "Solver.h"
+#include "TextureShader.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -45,7 +44,6 @@ private:
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	ModelClass* m_Model;
 	pjs::Cloth* m_Cloth;
 	TextureShaderClass* m_TextureShader;
 

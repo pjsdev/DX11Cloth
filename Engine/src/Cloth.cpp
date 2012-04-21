@@ -1,7 +1,8 @@
-#include "cloth.h"
-
 #include <sstream>
 #include <iostream>
+
+#include "../include/Cloth.h"
+
 using namespace pjs;
 
 Cloth::Cloth()

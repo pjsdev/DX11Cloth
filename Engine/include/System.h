@@ -20,9 +20,9 @@
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
-#include "inputclass.h"
-#include "graphicsclass.h"
-#include "solver.h"
+#include "Input.h"
+#include "Renderer.h"
+#include "Solver.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass

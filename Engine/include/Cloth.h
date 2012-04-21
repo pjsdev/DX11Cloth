@@ -6,9 +6,9 @@
 
 #include <vector>
 
-#include "api.h"
-#include "textureclass.h"
-#include "solver.h"
+#include "Api.h"
+#include "Texture.h"
+#include "Solver.h"
 
 namespace pjs
 {
