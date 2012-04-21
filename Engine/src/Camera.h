@@ -14,12 +14,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: CameraClass
 ////////////////////////////////////////////////////////////////////////////////
-class CameraClass
+class Camera
 {
 public:
-	CameraClass();
-	CameraClass(const CameraClass&);
-	~CameraClass();
+	Camera();
+	Camera(const Camera&);
+	~Camera();
 
 	void SetPosition(float, float, float);
 	void SetRotation(float, float, float);

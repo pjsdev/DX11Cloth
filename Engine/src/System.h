@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: systemclass.h
+// Filename: System.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _SYSTEMCLASS_H_
-#define _SYSTEMCLASS_H_
+#ifndef _System_H_
+#define _System_H_
 
 
 ///////////////////////////////
@@ -25,14 +25,14 @@
 #include "Solver.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: SystemClass
+// Class name: System
 ////////////////////////////////////////////////////////////////////////////////
-class SystemClass
+class System
 {
 public:
-	SystemClass();
-	SystemClass(const SystemClass&);
-	~SystemClass();
+	System();
+	System(const System&);
+	~System();
 
 	bool Initialize();
 	void Shutdown();
@@ -50,8 +50,8 @@ private:
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
 
-	InputClass* m_Input;
-	GraphicsClass* m_Graphics;
+	Input* m_Input;
+	Renderer* m_Graphics;
 	pjs::Solver* m_Solver;
 };
 
@@ -65,7 +65,7 @@ static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 /////////////
 // GLOBALS //
 /////////////
-static SystemClass* ApplicationHandle = 0;
+static System* ApplicationHandle = 0;
 
 
 #endif

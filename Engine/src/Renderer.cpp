@@ -1,31 +1,31 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: graphicsclass.cpp
+// Filename: Renderer.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "Renderer.h"
 
 
 using namespace pjs;
 
-GraphicsClass::GraphicsClass()
+Renderer::Renderer()
 {
 	m_D3D = 0;
-	m_Camera = 0;
-	m_TextureShader = 0;
-	m_Cloth = 0;
+	m_camera = 0;
+	m_textureShader = 0;
+	m_cloth = 0;
 }
 
 
-GraphicsClass::GraphicsClass(const GraphicsClass& other)
+Renderer::Renderer(const Renderer& other)
 {
 }
 
 
-GraphicsClass::~GraphicsClass()
+Renderer::~Renderer()
 {
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 
@@ -46,24 +46,24 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the camera object.
-	m_Camera = new CameraClass;
-	if(!m_Camera)
+	m_camera = new Camera;
+	if(!m_camera)
 	{
 		return false;
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(-1.0f, -60.0f, -100.0f);
+	m_camera->SetPosition(-1.0f, -60.0f, -100.0f);
 
 	// Create the model object.
-	m_Cloth = new Cloth(25,20,3.0f);
-	if(!m_Cloth)
+	m_cloth = new Cloth(25,20,3.0f);
+	if(!m_cloth)
 	{
 		return false;
 	}
 
 	// Initialize the model object.
-	result = m_Cloth->Initialize(m_D3D->GetDevice(), L"../Engine/textures/ukFlag.jpg");
+	result = m_cloth->Initialize(m_D3D->GetDevice(), L"../Engine/textures/ukFlag.jpg");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the cloth object.", L"Error", MB_OK);
@@ -71,14 +71,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the color shader object.
-	m_TextureShader = new TextureShaderClass;
-	if(!m_TextureShader)
+	m_textureShader = new TextureShader;
+	if(!m_textureShader)
 	{
 		return false;
 	}
 
 	// Initialize the color shader object.
-	result = m_TextureShader->Initialize(m_D3D->GetDevice(), hwnd);
+	result = m_textureShader->Initialize(m_D3D->GetDevice(), hwnd);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -89,28 +89,28 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 }
 
 
-void GraphicsClass::Shutdown()
+void Renderer::Shutdown()
 {
 	// Release the color shader object.
-	if(m_TextureShader)
+	if(m_textureShader)
 	{
-		m_TextureShader->Shutdown();
-		delete m_TextureShader;
-		m_TextureShader = 0;
+		m_textureShader->Shutdown();
+		delete m_textureShader;
+		m_textureShader = 0;
 	}
 
-	if(m_Cloth)
+	if(m_cloth)
 	{
-		m_Cloth->Shutdown();
-		delete m_Cloth;
-		m_Cloth = 0;
+		m_cloth->Shutdown();
+		delete m_cloth;
+		m_cloth = 0;
 	}
 
 	// Release the camera object.
-	if(m_Camera)
+	if(m_camera)
 	{
-		delete m_Camera;
-		m_Camera = 0;
+		delete m_camera;
+		m_camera = 0;
 	}
 
 	// Release the D3D object.
@@ -125,11 +125,11 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(pjs::Solver* _solver, float _timeStep)
+bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
 {
 	bool result;
 
-	m_Cloth->Frame(_solver, _timeStep, m_D3D->GetDeviceContext());
+	m_cloth->Frame(_solver, _timeStep, m_D3D->GetDeviceContext());
 	// Render the graphics scene.
 	result = Render();
 	if(!result)
@@ -141,7 +141,7 @@ bool GraphicsClass::Frame(pjs::Solver* _solver, float _timeStep)
 }
 
 
-bool GraphicsClass::Render()
+bool Renderer::Render()
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
@@ -150,18 +150,18 @@ bool GraphicsClass::Render()
 	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	m_Camera->Render();
+	m_camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_Camera->GetViewMatrix(viewMatrix);
+	m_camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_Cloth->Render(m_D3D->GetDeviceContext());
+	m_cloth->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Cloth->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_Cloth->GetTexture());
+	result = m_textureShader->Render(m_D3D->GetDeviceContext(), m_cloth->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_cloth->GetTexture());
 	if(!result)
 	{
 		return false;

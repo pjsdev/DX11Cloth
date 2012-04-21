@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: graphicsclass.h
+// Filename: Renderer.h
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _GRAPHICSCLASS_H_
-#define _GRAPHICSCLASS_H_
+#ifndef _Renderer_H_
+#define _Renderer_H_
 
 
 ///////////////////////
@@ -23,29 +23,29 @@ const float SCREEN_NEAR = 0.1f;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: GraphicsClass
+// Class name: Renderer
 ////////////////////////////////////////////////////////////////////////////////
-class GraphicsClass
+class Renderer
 {
 public:
-	GraphicsClass();
-	GraphicsClass(const GraphicsClass&);
-	~GraphicsClass();
+	Renderer();
+	Renderer(const Renderer&);
+	~Renderer();
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Frame(pjs::Solver* _solver, float _timeStep);
 
-	inline pjs::Cloth* cloth(){return m_Cloth;}
+	inline pjs::Cloth* cloth(){return m_cloth;}
 
 private:
 	bool Render();
 
 private:
 	D3DClass* m_D3D;
-	CameraClass* m_Camera;
-	pjs::Cloth* m_Cloth;
-	TextureShaderClass* m_TextureShader;
+	Camera* m_camera;
+	pjs::Cloth* m_cloth;
+	TextureShader* m_textureShader;
 
 };
 

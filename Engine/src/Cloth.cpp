@@ -9,7 +9,7 @@ Cloth::Cloth()
 {
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_Texture = 0;
+	m_texture = 0;
 }
 
 Cloth::Cloth(int _width, int _height, float _spacing):m_width(_width),m_height(_height),m_spacing(_spacing)
@@ -127,7 +127,7 @@ bool Cloth::Initialize(ID3D11Device* _device, WCHAR* _textureFilename)
 
 ID3D11ShaderResourceView* Cloth::GetTexture()
 {
-	return m_Texture->GetTexture();
+	return m_texture->GetTexture();
 }
 
 void Cloth::Shutdown()
@@ -144,14 +144,14 @@ bool Cloth::LoadTexture(ID3D11Device* device, WCHAR* filename)
 
 
 	// Create the texture object.
-	m_Texture = new TextureClass;
-	if(!m_Texture)
+	m_texture = new Texture;
+	if(!m_texture)
 	{
 		return false;
 	}
 
 	// Initialize the texture object.
-	result = m_Texture->Initialize(device, filename);
+	result = m_texture->Initialize(device, filename);
 	if(!result)
 	{
 		return false;
@@ -163,11 +163,11 @@ bool Cloth::LoadTexture(ID3D11Device* device, WCHAR* filename)
 void Cloth::ReleaseTexture()
 {
 	// Release the texture object.
-	if(m_Texture)
+	if(m_texture)
 	{
-		m_Texture->Shutdown();
-		delete m_Texture;
-		m_Texture = 0;
+		m_texture->Shutdown();
+		delete m_texture;
+		m_texture = 0;
 	}
 
 	return;

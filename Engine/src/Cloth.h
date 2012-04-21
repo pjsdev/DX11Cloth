@@ -48,7 +48,7 @@ namespace pjs
 		void calculateSpringForce(Spring &_spring);
 		void accumulateForces(Solver* _solver);
 
-		TextureClass* m_Texture;
+		Texture* m_texture;
 
 		ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 		int m_vertexCount, m_indexCount;
