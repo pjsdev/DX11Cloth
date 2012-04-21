@@ -1,4 +1,4 @@
-#include "../include/Solver.h"
+#include "Solver.h"
 
 using namespace pjs;
 
