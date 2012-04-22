@@ -328,7 +328,7 @@ void Cloth::renderBuffers(ID3D11DeviceContext* _deviceContext)
 	_deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 	return;
 }

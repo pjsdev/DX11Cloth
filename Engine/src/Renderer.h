@@ -13,6 +13,7 @@
 #include "Cloth.h"
 #include "Solver.h"
 #include "TextureShader.h"
+#include "TessellationShader.h"
 #include "Light.h"
 
 /////////////
@@ -48,6 +49,7 @@ private:
 	Camera* m_camera;
 	pjs::Cloth* m_cloth;
 	TextureShader* m_textureShader;
+	TessellationShader* m_tessellationShader;
 	Light* m_light;
 };
 

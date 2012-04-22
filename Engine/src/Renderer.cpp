@@ -11,6 +11,7 @@ Renderer::Renderer()
 	m_D3D = 0;
 	m_camera = 0;
 	m_textureShader = 0;
+	m_tessellationShader = 0;
 	m_cloth = 0;
 	m_light = 0;
 }
@@ -54,10 +55,10 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->setPosition(-1.0f, -60.0f, -140.0f);
+	m_camera->setPosition(-1.0f, -25.0f, -50.0f);
 
 	// Create the model object.
-	m_cloth = new Cloth(30,20,3.0f);
+	m_cloth = new Cloth(15,10,3.0f);
 	if(!m_cloth)
 	{
 		return false;
@@ -86,6 +87,21 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the color shader object.
+	m_tessellationShader = new TessellationShader;
+	if(!m_tessellationShader)
+	{
+		return false;
+	}
+
+	// Initialize the color shader object.
+	result = m_tessellationShader->initialize(m_D3D->getDevice(), hwnd);
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the tessellation shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	//Create the light
 	m_light = new Light;
 	if(!m_light)
@@ -93,9 +109,9 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_light->setAmbientColor(0.5f,0.3f,0.5f,1.0f);
-	m_light->setDiffuseColor(0.7f,0.7f,0.5f,1.0f);
-	m_light->setDirection(0.5f,0.3f,1.0f);
+	m_light->setAmbientColor(0.5f,0.5f,0.5f,1.0f);
+	m_light->setDiffuseColor(0.7f,0.7f,0.7f,1.0f);
+	m_light->setDirection(0.5f,0.0f,0.5f);
 	m_light->setSpecularColor(0.3f,0.3f,0.3f,1.0f);
 	m_light->setSpecularPower(4.0f);
 
@@ -118,6 +134,14 @@ void Renderer::shutdown()
 		m_textureShader->shutdown();
 		delete m_textureShader;
 		m_textureShader = 0;
+	}
+
+	// Release the color shader object.
+	if(m_tessellationShader)
+	{
+		m_tessellationShader->shutdown();
+		delete m_tessellationShader;
+		m_tessellationShader = 0;
 	}
 
 	if(m_cloth)
@@ -194,11 +218,19 @@ bool Renderer::render(float _rotation)
 	m_cloth->render(m_D3D->getDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_textureShader->render(
+	//result = m_textureShader->render(
+	//	m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
+	//	worldMatrix, viewMatrix, projectionMatrix, 
+	//	m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
+	//	m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
+
+	result = m_tessellationShader->render(
 		m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, 
-		m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
-		m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
+		m_cloth->getTexture(), m_light->getAmbientColor(), 
+		m_light->getDiffuseColor(), m_light->getDirection(),
+		10.0f);
+
 	if(!result)
 	{
 		return false;
