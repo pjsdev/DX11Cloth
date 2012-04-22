@@ -55,10 +55,10 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->setPosition(-1.0f, -25.0f, -50.0f);
+	m_camera->setPosition(-1.0f, -14.0f, -20.0f);
 
 	// Create the model object.
-	m_cloth = new Cloth(15,10,3.0f);
+	m_cloth = new Cloth(7,5,3.0f);
 	if(!m_cloth)
 	{
 		return false;
@@ -229,7 +229,7 @@ bool Renderer::render(float _rotation)
 		worldMatrix, viewMatrix, projectionMatrix, 
 		m_cloth->getTexture(), m_light->getAmbientColor(), 
 		m_light->getDiffuseColor(), m_light->getDirection(),
-		10.0f);
+		12.0f);
 
 	if(!result)
 	{
