@@ -60,7 +60,7 @@ void Camera::Render()
 {
 	D3DXVECTOR3 up, position, lookAt;
 	float yaw, pitch, roll;
-	D3DXMATRIX rotationMatrix;
+	Matrix rotationMatrix;
 
 
 	// Setup the vector that points upwards.
@@ -100,7 +100,7 @@ void Camera::Render()
 }
 
 
-void Camera::GetViewMatrix(D3DXMATRIX& viewMatrix)
+void Camera::GetViewMatrix(Matrix& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
 	return;

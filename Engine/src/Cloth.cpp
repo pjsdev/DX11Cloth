@@ -19,7 +19,7 @@ Cloth::Cloth(int _width, int _height, float _spacing):m_width(_width),m_height(_
 	m_vertexCount = m_indexCount = m_width*m_height;
 	m_particles.resize(m_vertexCount);
 }
-Cloth::~Cloth(){}
+Cloth::~Cloth(){} 
 
 void Cloth::Frame(Solver* _solver, float _timeStep, ID3D11DeviceContext* _context)
 {
@@ -38,13 +38,13 @@ void Cloth::UpdateBuffers(ID3D11DeviceContext* _context)
     float sProportion = 1.0f/(float)m_width;
     float tProportion = 1.0f/(float)m_height;
 
-	vec3 normal;
+	Vec3 normal;
 	for(int i = 0; i < m_vertexCount; ++i)
 	{
 		VertexType tmp;
 		tmp.position = m_particles[i].pos;
 
-		tmp.tex = vec2((s*sProportion), (t*tProportion));
+		tmp.tex = Vec2((s*sProportion), (t*tProportion));
 
         if((i+1)%m_width == 0)
         {
@@ -56,7 +56,7 @@ void Cloth::UpdateBuffers(ID3D11DeviceContext* _context)
             s+=1.0f;
         }
 
-		vec3 v2Out, v1Out, v1, v2;
+		Vec3 v2Out, v1Out, v1, v2;
 		bool flip = false;
 		if(i + m_width < m_width*m_height)
         {
@@ -214,8 +214,8 @@ bool Cloth::InitializeBuffers(ID3D11Device* _device)
 	for(int i = 0; i < m_vertexCount; ++i)
 	{
 		vertices[i].position = m_particles[i].pos;
-		vertices[i].normal = vec3(0,0,0);
-		vertices[i].tex = vec2(0,0);
+		vertices[i].normal = Vec3(0,0,0);
+		vertices[i].tex = Vec2(0,0);
 	}
 
 	// these indices need to properly guide the vertex shader through triangle drawing of the cloth
@@ -347,7 +347,7 @@ void Cloth::initializeBendSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+2];
 
-			vec3 dist = s.p1->pos - s.p2->pos;
+			Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
@@ -363,7 +363,7 @@ void Cloth::initializeBendSprings()
 		s.p1 = &m_particles[i];
 		s.p2 = &m_particles[i+(m_width*2)];
 
-		vec3 dist = s.p1->pos - s.p2->pos;
+		Vec3 dist = s.p1->pos - s.p2->pos;
 
 		s.restLength = D3DXVec3Length(&dist);
 		s.damping = 100.0f;
@@ -383,7 +383,7 @@ void Cloth::initializeShearSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+(m_width+1)];
 
-			vec3 dist = s.p1->pos - s.p2->pos;
+			Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
@@ -401,7 +401,7 @@ void Cloth::initializeShearSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i-(m_width-1)];
 
-			vec3 dist = s.p1->pos - s.p2->pos;
+			Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
@@ -419,7 +419,7 @@ void Cloth::initializeStructSprings()
 			Spring s;
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+1];
-			vec3 dist = s.p1->pos - s.p2->pos;
+			Vec3 dist = s.p1->pos - s.p2->pos;
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
 			s.stiffness = 230.0f;
@@ -434,7 +434,7 @@ void Cloth::initializeStructSprings()
 			Spring s;
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+m_width];
-			vec3 dist = s.p1->pos - s.p2->pos;
+			Vec3 dist = s.p1->pos - s.p2->pos;
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
 			s.stiffness = 230.0f;
@@ -448,11 +448,11 @@ void Cloth::intializeParticles()
 	float x = (-((float)m_width)*0.5f)*m_spacing;
 	for(unsigned int i = 0; i < m_particles.size(); i++)
 	{
-		m_particles[i].pos = vec3(x, y,0.0);
-		m_particles[i].lastPos = vec3(x, y,0.0);
+		m_particles[i].pos = Vec3(x, y,0.0);
+		m_particles[i].lastPos = Vec3(x, y,0.0);
 
-		m_particles[i].velocity = vec3(.0f, .0f, .0f);
-		m_particles[i].acceleration = vec3(.0f, .0f, .0f);
+		m_particles[i].velocity = Vec3(.0f, .0f, .0f);
+		m_particles[i].acceleration = Vec3(.0f, .0f, .0f);
 		m_particles[i].mass = 1.0;
 		m_particles[i].isConstrained = false;
 		m_particles[i].id = i;

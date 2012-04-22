@@ -13,7 +13,7 @@ namespace pjs
 {
 	struct Particle
 		{
-			vec3 pos, velocity, acceleration, lastPos;
+			Vec3 pos, velocity, acceleration, lastPos;
 			float mass;
 			bool isConstrained;
 			int id;
@@ -34,16 +34,16 @@ namespace pjs
 		bool Initialize();
 		void Shutdown();
 
-		void addForce(const std::string &_name, const vec3 &_force);
+		void addForce(const std::string &_name, const Vec3 &_force);
 		void removeForce(const std::string &_name);
-		void editForce(const std::string &_name, const vec3 &_modifier);
+		void editForce(const std::string &_name, const Vec3 &_modifier);
 		void calculateSpringForce(std::vector<Spring>& _springs);
 		void accumulateForces(std::vector<Particle> &_particles);
 
 		void verlet(std::vector<Particle> &_particles, float _timeStep);
 
 	private:
-		std::map<std::string, vec3> m_forces;
+		std::map<std::string, Vec3> m_forces;
 	};
 }
 

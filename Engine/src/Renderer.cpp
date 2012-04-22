@@ -12,6 +12,7 @@ Renderer::Renderer()
 	m_camera = 0;
 	m_textureShader = 0;
 	m_cloth = 0;
+	m_light = 0;
 }
 
 
@@ -53,10 +54,10 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->SetPosition(-1.0f, -60.0f, -100.0f);
+	m_camera->SetPosition(-1.0f, -60.0f, -140.0f);
 
 	// Create the model object.
-	m_cloth = new Cloth(25,20,3.0f);
+	m_cloth = new Cloth(30,20,3.0f);
 	if(!m_cloth)
 	{
 		return false;
@@ -85,12 +86,29 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	//Create the light
+	m_light = new Light;
+	if(!m_light)
+	{
+		return false;
+	}
+
+	m_light->SetDiffuseColor(1.0f,0.7f,0.5f,1.0f);
+	m_light->SetDirection(0.5f,0.3f,1.0f);
+
 	return true;
 }
 
 
 void Renderer::Shutdown()
 {
+	//release the light
+	if(m_light)
+	{
+		delete m_light;
+		m_light = 0;
+	}
+
 	// Release the color shader object.
 	if(m_textureShader)
 	{
@@ -129,9 +147,18 @@ bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
 {
 	bool result;
 
+	static float rotation = 0.0f;
+
+	// Update the rotation variable each frame.
+	rotation += (float)D3DX_PI * 0.001f;
+	if(rotation > 360.0f)
+	{
+		rotation -= 360.0f;
+	}
+
 	m_cloth->Frame(_solver, _timeStep, m_D3D->GetDeviceContext());
 	// Render the graphics scene.
-	result = Render();
+	result = Render(rotation);
 	if(!result)
 	{
 		return false;
@@ -141,13 +168,13 @@ bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
 }
 
 
-bool Renderer::Render()
+bool Renderer::Render(float _rotation)
 {
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	Matrix worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	m_D3D->BeginScene(0.4f, 0.4f, 0.4f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_camera->Render();
@@ -157,11 +184,17 @@ bool Renderer::Render()
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 
+	// Rotate the world matrix by the rotation value so that the triangle will spin.
+	D3DXMatrixRotationY(&worldMatrix, _rotation);
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_cloth->Render(m_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_textureShader->Render(m_D3D->GetDeviceContext(), m_cloth->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, m_cloth->GetTexture());
+	result = m_textureShader->Render(
+		m_D3D->GetDeviceContext(), m_cloth->GetIndexCount(), 
+		worldMatrix, viewMatrix, projectionMatrix, 
+		m_cloth->GetTexture(), m_light->GetDiffuseColor(), m_light->GetDirection());
 	if(!result)
 	{
 		return false;

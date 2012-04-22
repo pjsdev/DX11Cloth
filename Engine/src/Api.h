@@ -3,8 +3,10 @@
 
 #include <D3DX10math.h>
 
-typedef D3DXVECTOR2 vec2;
-typedef D3DXVECTOR3 vec3;
-typedef D3DXVECTOR4 vec4;
+typedef D3DXVECTOR2 Vec2;
+typedef D3DXVECTOR3 Vec3;
+typedef D3DXVECTOR4 Vec4;
+
+typedef D3DXMATRIX Matrix;
 
 #endif

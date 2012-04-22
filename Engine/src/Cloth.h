@@ -17,9 +17,9 @@ namespace pjs
 	private:
 		struct VertexType
 		{
-			vec3 position;
-			vec3 normal;
-			vec2 tex;
+			Vec3 position;
+			Vec3 normal;
+			Vec2 tex;
 		};
 	public:
 		Cloth();

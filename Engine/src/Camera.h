@@ -10,6 +10,7 @@
 //////////////
 #include <d3dx10math.h>
 
+#include "Api.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: CameraClass
@@ -28,12 +29,12 @@ public:
 	D3DXVECTOR3 GetRotation();
 
 	void Render();
-	void GetViewMatrix(D3DXMATRIX&);
+	void GetViewMatrix(Matrix&);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
-	D3DXMATRIX m_viewMatrix;
+	Matrix m_viewMatrix;
 };
 
 #endif

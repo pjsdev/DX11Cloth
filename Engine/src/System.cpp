@@ -54,7 +54,8 @@ bool System::Initialize()
 
 	// Initialize the input object.
 	m_Solver->Initialize();
-	m_Solver->addForce("gravity", vec3(1.0f,-3.0f,0.5f));
+	m_Solver->addForce("gravity", Vec3(0.0f,-7.0f,0.5f));
+	m_Solver->addForce("wind", Vec3(4.0f,1.0f,1.5f));
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_Graphics = new Renderer;

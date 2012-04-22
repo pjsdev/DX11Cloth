@@ -13,6 +13,8 @@
 #include "Cloth.h"
 #include "Solver.h"
 #include "TextureShader.h"
+#include "Light.h"
+
 /////////////
 // GLOBALS //
 /////////////
@@ -39,14 +41,14 @@ public:
 	inline pjs::Cloth* cloth(){return m_cloth;}
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* m_D3D;
 	Camera* m_camera;
 	pjs::Cloth* m_cloth;
 	TextureShader* m_textureShader;
-
+	Light* m_light;
 };
 
 #endif
