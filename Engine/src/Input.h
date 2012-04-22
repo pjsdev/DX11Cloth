@@ -15,12 +15,12 @@ public:
 	Input(const Input&);
 	~Input();
 
-	void Initialize();
+	void initialize();
 
-	void KeyDown(unsigned int);
-	void KeyUp(unsigned int);
+	void keyDown(unsigned int);
+	void keyUp(unsigned int);
 
-	bool IsKeyDown(unsigned int);
+	bool isKeyDown(unsigned int);
 
 private:
 	bool m_keys[256];

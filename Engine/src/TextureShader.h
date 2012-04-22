@@ -49,17 +49,17 @@ public:
 	TextureShader(const TextureShader&);
 	~TextureShader();
 
-	bool Initialize(ID3D11Device*, HWND);
-	void Shutdown();
-	bool Render(ID3D11DeviceContext*, int, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
+	bool initialize(ID3D11Device*, HWND);
+	void shutdown();
+	bool render(ID3D11DeviceContext*, int, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
 
 private:
-	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
-	void ShutdownShader();
-	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
+	bool initializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
+	void shutdownShader();
+	void outputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
-	void RenderShader(ID3D11DeviceContext*, int);
+	bool setShaderParameters(ID3D11DeviceContext*, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
+	void renderShader(ID3D11DeviceContext*, int);
 
 private:
 	ID3D11VertexShader* m_vertexShader;

@@ -31,8 +31,8 @@ namespace pjs
 		Solver(const Solver&);
 		~Solver();
 
-		bool Initialize();
-		void Shutdown();
+		bool initialize();
+		void shutdown();
 
 		void addForce(const std::string &_name, const Vec3 &_force);
 		void removeForce(const std::string &_name);

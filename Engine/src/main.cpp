@@ -1,31 +1,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: main.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "System.h"
+#include "Engine.h"
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-	System* system;
+	Engine* system;
 	bool result;
 	
 	
 	// Create the system object.
-	system = new System;
+	system = new Engine;
 	if(!system)
 	{
 		return 0;
 	}
 
 	// Initialize and run the system object.
-	result = system->Initialize();
+	result = system->initialize();
 	if(result)
 	{
-		system->Run();
+		system->run();
 	}
 
 	// Shutdown and release the system object.
-	system->Shutdown();
+	system->shutdown();
 	delete system;
 	system = 0;
 

@@ -18,26 +18,26 @@ Light::~Light()
 {
 }
 
-void Light::SetSpecularColor(float red, float green, float blue, float alpha)
+void Light::setSpecularColor(float red, float green, float blue, float alpha)
 {
 	m_specularColor = Vec4(red, green, blue, alpha);
 	return;
 }
 
-void Light::SetDiffuseColor(float red, float green, float blue, float alpha)
+void Light::setDiffuseColor(float red, float green, float blue, float alpha)
 {
 	m_diffuseColor = Vec4(red, green, blue, alpha);
 	return;
 }
 
 
-void Light::SetAmbientColor(float red, float green, float blue, float alpha)
+void Light::setAmbientColor(float red, float green, float blue, float alpha)
 {
 	m_ambientColor = Vec4(red, green, blue, alpha);
 	return;
 }
 
-void Light::SetDirection(float x, float y, float z)
+void Light::setDirection(float x, float y, float z)
 {
 	m_direction = Vec3(x, y, z);
 	return;
@@ -54,23 +54,23 @@ float Light::getSpecularPower()
 	return m_specularPower;
 }
 
-Vec4 Light::GetSpecularColor()
+Vec4 Light::getSpecularColor()
 {
 	return m_specularColor;
 }
 
-Vec4 Light::GetAmbientColor()
+Vec4 Light::getAmbientColor()
 {
 	return m_ambientColor;
 }
 
-Vec4 Light::GetDiffuseColor()
+Vec4 Light::getDiffuseColor()
 {
 	return m_diffuseColor;
 }
 
 
-Vec3 Light::GetDirection()
+Vec3 Light::getDirection()
 {
 	return m_direction;
 }

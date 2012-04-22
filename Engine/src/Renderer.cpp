@@ -26,7 +26,7 @@ Renderer::~Renderer()
 }
 
 
-bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
 
@@ -39,7 +39,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the Direct3D object.
-	result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = m_D3D->initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D.", L"Error", MB_OK);
@@ -54,7 +54,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->SetPosition(-1.0f, -60.0f, -140.0f);
+	m_camera->setPosition(-1.0f, -60.0f, -140.0f);
 
 	// Create the model object.
 	m_cloth = new Cloth(30,20,3.0f);
@@ -64,7 +64,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = m_cloth->Initialize(m_D3D->GetDevice(), L"../Engine/textures/ukFlag.jpg");
+	result = m_cloth->initialize(m_D3D->getDevice(), L"../Engine/textures/ukFlag.jpg");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the cloth object.", L"Error", MB_OK);
@@ -79,7 +79,7 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the color shader object.
-	result = m_textureShader->Initialize(m_D3D->GetDevice(), hwnd);
+	result = m_textureShader->initialize(m_D3D->getDevice(), hwnd);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -93,17 +93,17 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_light->SetAmbientColor(0.5f,0.3f,0.5f,1.0f);
-	m_light->SetDiffuseColor(0.7f,0.7f,0.5f,1.0f);
-	m_light->SetDirection(0.5f,0.3f,1.0f);
-	m_light->SetSpecularColor(0.3f,0.3f,0.3f,1.0f);
+	m_light->setAmbientColor(0.5f,0.3f,0.5f,1.0f);
+	m_light->setDiffuseColor(0.7f,0.7f,0.5f,1.0f);
+	m_light->setDirection(0.5f,0.3f,1.0f);
+	m_light->setSpecularColor(0.3f,0.3f,0.3f,1.0f);
 	m_light->setSpecularPower(4.0f);
 
 	return true;
 }
 
 
-void Renderer::Shutdown()
+void Renderer::shutdown()
 {
 	//release the light
 	if(m_light)
@@ -115,14 +115,14 @@ void Renderer::Shutdown()
 	// Release the color shader object.
 	if(m_textureShader)
 	{
-		m_textureShader->Shutdown();
+		m_textureShader->shutdown();
 		delete m_textureShader;
 		m_textureShader = 0;
 	}
 
 	if(m_cloth)
 	{
-		m_cloth->Shutdown();
+		m_cloth->shutdown();
 		delete m_cloth;
 		m_cloth = 0;
 	}
@@ -137,7 +137,7 @@ void Renderer::Shutdown()
 	// Release the D3D object.
 	if(m_D3D)
 	{
-		m_D3D->Shutdown();
+		m_D3D->shutdown();
 		delete m_D3D;
 		m_D3D = 0;
 	}
@@ -146,7 +146,7 @@ void Renderer::Shutdown()
 }
 
 
-bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
+bool Renderer::frame(pjs::Solver* _solver, float _timeStep)
 {
 	bool result;
 
@@ -159,9 +159,9 @@ bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
 		rotation -= 360.0f;
 	}
 
-	m_cloth->Frame(_solver, _timeStep, m_D3D->GetDeviceContext());
+	m_cloth->frame(_solver, _timeStep, m_D3D->getDeviceContext());
 	// Render the graphics scene.
-	result = Render(rotation);
+	result = render(rotation);
 	if(!result)
 	{
 		return false;
@@ -171,41 +171,41 @@ bool Renderer::Frame(pjs::Solver* _solver, float _timeStep)
 }
 
 
-bool Renderer::Render(float _rotation)
+bool Renderer::render(float _rotation)
 {
 	Matrix worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.4f, 0.4f, 0.4f, 1.0f);
+	m_D3D->beginScene(0.4f, 0.4f, 0.4f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	m_camera->Render();
+	m_camera->render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_camera->GetViewMatrix(viewMatrix);
-	m_D3D->GetWorldMatrix(worldMatrix);
-	m_D3D->GetProjectionMatrix(projectionMatrix);
+	m_camera->getViewMatrix(viewMatrix);
+	m_D3D->getWorldMatrix(worldMatrix);
+	m_D3D->getProjectionMatrix(projectionMatrix);
 
 	// Rotate the world matrix by the rotation value so that the triangle will spin.
 	D3DXMatrixRotationY(&worldMatrix, _rotation);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	m_cloth->Render(m_D3D->GetDeviceContext());
+	m_cloth->render(m_D3D->getDeviceContext());
 
 	// Render the model using the color shader.
-	result = m_textureShader->Render(
-		m_D3D->GetDeviceContext(), m_cloth->GetIndexCount(), 
+	result = m_textureShader->render(
+		m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, 
-		m_cloth->GetTexture(), m_light->GetAmbientColor(), m_light->GetDiffuseColor(), m_light->GetDirection(),
-		m_light->getSpecularPower(),m_light->GetSpecularColor(), m_camera->GetPosition());
+		m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
+		m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
 	if(!result)
 	{
 		return false;
 	}
 
 	// Present the rendered scene to the screen.
-	m_D3D->EndScene();
+	m_D3D->endScene();
 
 	return true;
 }

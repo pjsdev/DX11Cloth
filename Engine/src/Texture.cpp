@@ -20,7 +20,7 @@ Texture::~Texture()
 }
 
 
-bool Texture::Initialize(ID3D11Device* device, WCHAR* filename)
+bool Texture::initialize(ID3D11Device* device, WCHAR* filename)
 {
 	HRESULT result;
 
@@ -36,7 +36,7 @@ bool Texture::Initialize(ID3D11Device* device, WCHAR* filename)
 }
 
 
-void Texture::Shutdown()
+void Texture::shutdown()
 {
 	// Release the texture resource.
 	if(m_texture)
@@ -49,7 +49,7 @@ void Texture::Shutdown()
 }
 
 
-ID3D11ShaderResourceView* Texture::GetTexture()
+ID3D11ShaderResourceView* Texture::getTexture()
 {
 	return m_texture;
 }

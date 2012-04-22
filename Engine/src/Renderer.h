@@ -34,14 +34,14 @@ public:
 	Renderer(const Renderer&);
 	~Renderer();
 
-	bool Initialize(int, int, HWND);
-	void Shutdown();
-	bool Frame(pjs::Solver* _solver, float _timeStep);
+	bool initialize(int, int, HWND);
+	void shutdown();
+	bool frame(pjs::Solver* _solver, float _timeStep);
 
 	inline pjs::Cloth* cloth(){return m_cloth;}
 
 private:
-	bool Render(float);
+	bool render(float);
 
 private:
 	D3DClass* m_D3D;

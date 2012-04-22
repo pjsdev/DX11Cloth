@@ -20,17 +20,17 @@ public:
 	Light(const Light&);
 	~Light();
 
-	void SetAmbientColor(float, float, float, float);
-	void SetDiffuseColor(float, float, float, float);
-	void SetSpecularColor(float, float, float, float);
-	void SetDirection(float, float, float);
+	void setAmbientColor(float, float, float, float);
+	void setDiffuseColor(float, float, float, float);
+	void setSpecularColor(float, float, float, float);
+	void setDirection(float, float, float);
 	void setSpecularPower(float);
 
-	Vec4 GetSpecularColor();
+	Vec4 getSpecularColor();
 	float getSpecularPower();
-	Vec4 GetAmbientColor();
-	Vec4 GetDiffuseColor();
-	Vec3 GetDirection();
+	Vec4 getAmbientColor();
+	Vec4 getDiffuseColor();
+	Vec3 getDirection();
 
 private:
 	Vec4 m_ambientColor;

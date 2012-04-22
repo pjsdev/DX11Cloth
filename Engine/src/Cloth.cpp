@@ -21,14 +21,14 @@ Cloth::Cloth(int _width, int _height, float _spacing):m_width(_width),m_height(_
 }
 Cloth::~Cloth(){} 
 
-void Cloth::Frame(Solver* _solver, float _timeStep, ID3D11DeviceContext* _context)
+void Cloth::frame(Solver* _solver, float _timeStep, ID3D11DeviceContext* _context)
 {
 	accumulateForces(_solver);
 	_solver->verlet(m_particles, _timeStep);
-	UpdateBuffers(_context);
+	updateBuffers(_context);
 }
 
-void Cloth::UpdateBuffers(ID3D11DeviceContext* _context)
+void Cloth::updateBuffers(ID3D11DeviceContext* _context)
 {
 	std::vector<VertexType> vertData;
 
@@ -108,11 +108,11 @@ void Cloth::UpdateBuffers(ID3D11DeviceContext* _context)
 
 }
 
-bool Cloth::Initialize(ID3D11Device* _device, WCHAR* _textureFilename)
+bool Cloth::initialize(ID3D11Device* _device, WCHAR* _textureFilename)
 {
 	bool result;
 	// Load the texture for this model.
-	result = LoadTexture(_device, _textureFilename);
+	result = loadTexture(_device, _textureFilename);
 	if(!result)
 	{
 		return false;
@@ -122,23 +122,23 @@ bool Cloth::Initialize(ID3D11Device* _device, WCHAR* _textureFilename)
 	initializeBendSprings();
 	initializeShearSprings();
 	initializeStructSprings();
-	return InitializeBuffers(_device);
+	return initializeBuffers(_device);
 }
 
-ID3D11ShaderResourceView* Cloth::GetTexture()
+ID3D11ShaderResourceView* Cloth::getTexture()
 {
-	return m_texture->GetTexture();
+	return m_texture->getTexture();
 }
 
-void Cloth::Shutdown()
+void Cloth::shutdown()
 {	
 	// Release the model texture.
-	ReleaseTexture();
+	releaseTexture();
 
-	ShutdownBuffers();
+	shutdownBuffers();
 }
 
-bool Cloth::LoadTexture(ID3D11Device* device, WCHAR* filename)
+bool Cloth::loadTexture(ID3D11Device* device, WCHAR* filename)
 {
 	bool result;
 
@@ -151,7 +151,7 @@ bool Cloth::LoadTexture(ID3D11Device* device, WCHAR* filename)
 	}
 
 	// Initialize the texture object.
-	result = m_texture->Initialize(device, filename);
+	result = m_texture->initialize(device, filename);
 	if(!result)
 	{
 		return false;
@@ -160,12 +160,12 @@ bool Cloth::LoadTexture(ID3D11Device* device, WCHAR* filename)
 	return true;
 }
 
-void Cloth::ReleaseTexture()
+void Cloth::releaseTexture()
 {
 	// Release the texture object.
 	if(m_texture)
 	{
-		m_texture->Shutdown();
+		m_texture->shutdown();
 		delete m_texture;
 		m_texture = 0;
 	}
@@ -174,19 +174,19 @@ void Cloth::ReleaseTexture()
 }
 
 
-void Cloth::Render(ID3D11DeviceContext* _deviceContext)
+void Cloth::render(ID3D11DeviceContext* _deviceContext)
 {
-	RenderBuffers(_deviceContext);
+	renderBuffers(_deviceContext);
 
 	return;
 }
 
-int Cloth::GetIndexCount()
+int Cloth::getIndexCount()
 {
 	return m_indexCount;
 }
 
-bool Cloth::InitializeBuffers(ID3D11Device* _device)
+bool Cloth::initializeBuffers(ID3D11Device* _device)
 {
 	VertexType* vertices;
 	unsigned long* indices;
@@ -293,7 +293,7 @@ bool Cloth::InitializeBuffers(ID3D11Device* _device)
 	return true;
 }
 
-void Cloth::ShutdownBuffers()
+void Cloth::shutdownBuffers()
 {
 	// Release the index buffer.
 	if(m_indexBuffer)
@@ -312,7 +312,7 @@ void Cloth::ShutdownBuffers()
 	return;
 }
 
-void Cloth::RenderBuffers(ID3D11DeviceContext* _deviceContext)
+void Cloth::renderBuffers(ID3D11DeviceContext* _deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;

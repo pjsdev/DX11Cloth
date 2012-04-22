@@ -22,14 +22,14 @@ public:
 	Camera(const Camera&);
 	~Camera();
 
-	void SetPosition(float, float, float);
-	void SetRotation(float, float, float);
+	void setPosition(float, float, float);
+	void setRotation(float, float, float);
 
-	D3DXVECTOR3 GetPosition();
-	D3DXVECTOR3 GetRotation();
+	D3DXVECTOR3 getPosition();
+	D3DXVECTOR3 getRotation();
 
-	void Render();
-	void GetViewMatrix(Matrix&);
+	void render();
+	void getViewMatrix(Matrix&);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;

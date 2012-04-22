@@ -26,20 +26,20 @@ namespace pjs
 		Cloth(int _width, int _height, float _spacing);
 		~Cloth();
 
-		void Frame(Solver* _solver, float _timeStep, ID3D11DeviceContext*);
+		void frame(Solver* _solver, float _timeStep, ID3D11DeviceContext*);
 
-		bool Initialize(ID3D11Device*,WCHAR*);
-		void Shutdown();
-		void Render(ID3D11DeviceContext*);
-		int GetIndexCount();
-		ID3D11ShaderResourceView* GetTexture();
+		bool initialize(ID3D11Device*,WCHAR*);
+		void shutdown();
+		void render(ID3D11DeviceContext*);
+		int getIndexCount();
+		ID3D11ShaderResourceView* getTexture();
 	private:
-		bool LoadTexture(ID3D11Device*, WCHAR*);
-		void ReleaseTexture();
-		bool InitializeBuffers(ID3D11Device*);
-		void ShutdownBuffers();
-		void RenderBuffers(ID3D11DeviceContext*);
-		void UpdateBuffers(ID3D11DeviceContext*);
+		bool loadTexture(ID3D11Device*, WCHAR*);
+		void releaseTexture();
+		bool initializeBuffers(ID3D11Device*);
+		void shutdownBuffers();
+		void renderBuffers(ID3D11DeviceContext*);
+		void updateBuffers(ID3D11DeviceContext*);
 		void initializeBendSprings();
 		void initializeShearSprings();
 		void initializeStructSprings();

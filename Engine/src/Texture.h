@@ -22,10 +22,10 @@ public:
 	Texture(const Texture&);
 	~Texture();
 
-	bool Initialize(ID3D11Device*, WCHAR*);
-	void Shutdown();
+	bool initialize(ID3D11Device*, WCHAR*);
+	void shutdown();
 
-	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* getTexture();
 
 private:
 	ID3D11ShaderResourceView* m_texture;

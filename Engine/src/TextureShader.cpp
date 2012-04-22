@@ -26,13 +26,13 @@ TextureShader::~TextureShader()
 }
 
 
-bool TextureShader::Initialize(ID3D11Device* device, HWND hwnd)
+bool TextureShader::initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../Engine/shaders/texture.vs", L"../Engine/shaders/texture.ps");
+	result = initializeShader(device, hwnd, L"../Engine/shaders/texture.vs", L"../Engine/shaders/texture.ps");
 	if(!result)
 	{
 		return false;
@@ -42,7 +42,7 @@ bool TextureShader::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 
-void TextureShader::Shutdown()
+void TextureShader::shutdown()
 {
 	// Shutdown the vertex and pixel shaders as well as the related objects.
 	TextureShader();
@@ -51,7 +51,7 @@ void TextureShader::Shutdown()
 }
 
 
-bool TextureShader::Render(
+bool TextureShader::render(
 	ID3D11DeviceContext* deviceContext, int indexCount, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
 	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
@@ -62,7 +62,7 @@ bool TextureShader::Render(
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(
+	result = setShaderParameters(
 		deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
 		texture, _ambientColor, _lightColor, _lightDirection,
 		_specPow, _specColor, _camPos);
@@ -72,13 +72,13 @@ bool TextureShader::Render(
 	}
 
 	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
+	renderShader(deviceContext, indexCount);
 
 	return true;
 }
 
 
-bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
+bool TextureShader::initializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage;
@@ -105,7 +105,7 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 		// If the shader failed to compile it should have writen something to the error message.
 		if(errorMessage)
 		{
-			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
+			outputShaderErrorMessage(errorMessage, hwnd, vsFilename);
 		}
 		// If there was nothing in the error message then it simply could not find the shader file itself.
 		else
@@ -124,7 +124,7 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 		// If the shader failed to compile it should have writen something to the error message.
 		if(errorMessage)
 		{
-			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
+			outputShaderErrorMessage(errorMessage, hwnd, psFilename);
 		}
 		// If there was  nothing in the error message then it simply could not find the file itself.
 		else
@@ -263,7 +263,7 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 }
 
 
-void TextureShader::ShutdownShader()
+void TextureShader::shutdownShader()
 {
 	// Release the light constant buffer.
 	if(m_cameraBuffer)
@@ -318,7 +318,7 @@ void TextureShader::ShutdownShader()
 }
 
 
-void TextureShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
+void TextureShader::outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
 	char* compileErrors;
 	unsigned long bufferSize, i;
@@ -354,7 +354,7 @@ void TextureShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd
 }
 
 
-bool TextureShader::SetShaderParameters(
+bool TextureShader::setShaderParameters(
 	ID3D11DeviceContext* deviceContext, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
 	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
@@ -449,7 +449,7 @@ bool TextureShader::SetShaderParameters(
 }
 
 
-void TextureShader::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+void TextureShader::renderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
 	// Set the vertex input layout.
 	deviceContext->IASetInputLayout(m_layout);

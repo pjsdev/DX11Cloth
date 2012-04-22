@@ -26,7 +26,7 @@ Camera::~Camera()
 }
 
 
-void Camera::SetPosition(float x, float y, float z)
+void Camera::setPosition(float x, float y, float z)
 {
 	m_positionX = x;
 	m_positionY = y;
@@ -35,7 +35,7 @@ void Camera::SetPosition(float x, float y, float z)
 }
 
 
-void Camera::SetRotation(float x, float y, float z)
+void Camera::setRotation(float x, float y, float z)
 {
 	m_rotationX = x;
 	m_rotationY = y;
@@ -44,19 +44,19 @@ void Camera::SetRotation(float x, float y, float z)
 }
 
 
-D3DXVECTOR3 Camera::GetPosition()
+D3DXVECTOR3 Camera::getPosition()
 {
 	return D3DXVECTOR3(m_positionX, m_positionY, m_positionZ);
 }
 
 
-D3DXVECTOR3 Camera::GetRotation()
+D3DXVECTOR3 Camera::getRotation()
 {
 	return D3DXVECTOR3(m_rotationX, m_rotationY, m_rotationZ);
 }
 
 
-void Camera::Render()
+void Camera::render()
 {
 	D3DXVECTOR3 up, position, lookAt;
 	float yaw, pitch, roll;
@@ -100,7 +100,7 @@ void Camera::Render()
 }
 
 
-void Camera::GetViewMatrix(Matrix& viewMatrix)
+void Camera::getViewMatrix(Matrix& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;
 	return;

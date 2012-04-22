@@ -59,12 +59,12 @@ void Solver::calculateSpringForce(std::vector<Spring> &_springs)
 	}
 }
 
-bool Solver::Initialize()
+bool Solver::initialize()
 {
 	m_forces.clear();
 	return true;
 }
-void Solver::Shutdown(){}
+void Solver::shutdown(){}
 
 void Solver::addForce(const std::string &_name, const Vec3 &_force)
 {
