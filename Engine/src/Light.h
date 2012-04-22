@@ -20,13 +20,16 @@ public:
 	Light(const Light&);
 	~Light();
 
+	void SetAmbientColor(float, float, float, float);
 	void SetDiffuseColor(float, float, float, float);
 	void SetDirection(float, float, float);
 
+	Vec4 GetAmbientColor();
 	Vec4 GetDiffuseColor();
 	Vec3 GetDirection();
 
 private:
+	Vec4 m_ambientColor;
 	Vec4 m_diffuseColor;
 	Vec3 m_direction;
 };

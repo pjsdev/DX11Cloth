@@ -53,14 +53,14 @@ void TextureShader::Shutdown()
 bool TextureShader::Render(
 	ID3D11DeviceContext* deviceContext, int indexCount, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _lightColor, Vec3 _lightDirection
+	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection
 	)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, _lightColor, _lightDirection);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, _ambientColor, _lightColor, _lightDirection);
 	if(!result)
 	{
 		return false;
@@ -329,7 +329,7 @@ void TextureShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd
 bool TextureShader::SetShaderParameters(
 	ID3D11DeviceContext* deviceContext, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _lightColor, Vec3 _lightDirection
+	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection
 	)
 {
 	HRESULT result;
@@ -382,6 +382,7 @@ bool TextureShader::SetShaderParameters(
 	lightData = (LightBufferType*)mappedResource.pData;
 
 	// Copy the lighting variables into the constant buffer.
+	lightData->ambientColor = _ambientColor;
 	lightData->diffuseColor = _lightColor;
 	lightData->lightDir = _lightDirection;
 	lightData->padding = 0.0f;

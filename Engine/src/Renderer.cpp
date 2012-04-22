@@ -93,7 +93,8 @@ bool Renderer::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	m_light->SetDiffuseColor(1.0f,0.7f,0.5f,1.0f);
+	m_light->SetAmbientColor(0.5f,0.3f,0.5f,1.0f);
+	m_light->SetDiffuseColor(0.7f,0.7f,0.5f,1.0f);
 	m_light->SetDirection(0.5f,0.3f,1.0f);
 
 	return true;
@@ -194,7 +195,7 @@ bool Renderer::Render(float _rotation)
 	result = m_textureShader->Render(
 		m_D3D->GetDeviceContext(), m_cloth->GetIndexCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, 
-		m_cloth->GetTexture(), m_light->GetDiffuseColor(), m_light->GetDirection());
+		m_cloth->GetTexture(), m_light->GetAmbientColor(), m_light->GetDiffuseColor(), m_light->GetDirection());
 	if(!result)
 	{
 		return false;
