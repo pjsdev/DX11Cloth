@@ -12,6 +12,7 @@ TextureShader::TextureShader()
 	m_matrixBuffer = 0;
 	m_sampleState = 0;
 	m_lightBuffer = 0;
+	m_cameraBuffer = 0;
 }
 
 
@@ -53,14 +54,18 @@ void TextureShader::Shutdown()
 bool TextureShader::Render(
 	ID3D11DeviceContext* deviceContext, int indexCount, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection
+	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
+	float _specPow, Vec4 _specColor, Vec3 _camPos
 	)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, _ambientColor, _lightColor, _lightDirection);
+	result = SetShaderParameters(
+		deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
+		texture, _ambientColor, _lightColor, _lightDirection,
+		_specPow, _specColor, _camPos);
 	if(!result)
 	{
 		return false;
@@ -83,6 +88,7 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
+	D3D11_BUFFER_DESC cameraBufferDesc;
     D3D11_SAMPLER_DESC samplerDesc;
 
 
@@ -216,6 +222,21 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 		return false;
 	}
 
+	// Setup the description of the camera dynamic constant buffer that is in the vertex shader.
+	cameraBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	cameraBufferDesc.ByteWidth = sizeof(CameraBufferType);
+	cameraBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cameraBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cameraBufferDesc.MiscFlags = 0;
+	cameraBufferDesc.StructureByteStride = 0;
+
+	// Create the camera constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	result = device->CreateBuffer(&cameraBufferDesc, NULL, &m_cameraBuffer);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
 	// Create a texture sampler state description.
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -244,6 +265,13 @@ bool TextureShader::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsF
 
 void TextureShader::ShutdownShader()
 {
+	// Release the light constant buffer.
+	if(m_cameraBuffer)
+	{
+		m_cameraBuffer->Release();
+		m_cameraBuffer = 0;
+	}
+
 	// Release the light constant buffer.
 	if(m_lightBuffer)
 	{
@@ -329,13 +357,15 @@ void TextureShader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd
 bool TextureShader::SetShaderParameters(
 	ID3D11DeviceContext* deviceContext, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection
+	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
+	float _specPow, Vec4 _specColor, Vec3 _camPos
 	)
 {
 	HRESULT result;
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* matData;
 	LightBufferType* lightData;
+	CameraBufferType* cameraData;
 	unsigned int bufferNumber;
 
 
@@ -385,7 +415,8 @@ bool TextureShader::SetShaderParameters(
 	lightData->ambientColor = _ambientColor;
 	lightData->diffuseColor = _lightColor;
 	lightData->lightDir = _lightDirection;
-	lightData->padding = 0.0f;
+	lightData->specularPower = _specPow;
+	lightData->specularColor = _specColor;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(m_lightBuffer, 0);
@@ -395,6 +426,23 @@ bool TextureShader::SetShaderParameters(
 
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &m_lightBuffer);
+
+		// Lock the camera constant buffer so it can be written to.
+	result = deviceContext->Map(m_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	cameraData = (CameraBufferType*)mappedResource.pData;
+
+	// Copy the camera position into the constant buffer.
+	cameraData->cameraPosition = _camPos;
+	cameraData->padding = 0.0f;
+
+	// Unlock the camera constant buffer.
+	deviceContext->Unmap(m_cameraBuffer, 0);
 
 
 	return true;

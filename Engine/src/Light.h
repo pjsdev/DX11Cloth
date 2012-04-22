@@ -22,16 +22,22 @@ public:
 
 	void SetAmbientColor(float, float, float, float);
 	void SetDiffuseColor(float, float, float, float);
+	void SetSpecularColor(float, float, float, float);
 	void SetDirection(float, float, float);
+	void setSpecularPower(float);
 
+	Vec4 GetSpecularColor();
+	float getSpecularPower();
 	Vec4 GetAmbientColor();
 	Vec4 GetDiffuseColor();
 	Vec3 GetDirection();
 
 private:
 	Vec4 m_ambientColor;
+	Vec4 m_specularColor;
 	Vec4 m_diffuseColor;
 	Vec3 m_direction;
+	float m_specularPower;
 };
 
 #endif

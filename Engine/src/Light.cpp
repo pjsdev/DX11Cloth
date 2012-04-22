@@ -18,8 +18,11 @@ Light::~Light()
 {
 }
 
-
-
+void Light::SetSpecularColor(float red, float green, float blue, float alpha)
+{
+	m_specularColor = Vec4(red, green, blue, alpha);
+	return;
+}
 
 void Light::SetDiffuseColor(float red, float green, float blue, float alpha)
 {
@@ -40,6 +43,21 @@ void Light::SetDirection(float x, float y, float z)
 	return;
 }
 
+void Light::setSpecularPower(float _pow)
+{
+	m_specularPower = _pow;
+	return;
+}
+
+float Light::getSpecularPower()
+{
+	return m_specularPower;
+}
+
+Vec4 Light::GetSpecularColor()
+{
+	return m_specularColor;
+}
 
 Vec4 Light::GetAmbientColor()
 {
