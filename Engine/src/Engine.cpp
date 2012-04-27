@@ -44,7 +44,12 @@ bool Engine::initialize()
 	}
 
 	// Initialize the input object.
-	m_input->initialize();
+	result = m_input->initialize(m_hinstance, m_hwnd, screenWidth, screenHeight);
+	if(!result)
+	{
+		MessageBox(m_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
 
 	m_solver = new Solver;
 	if(!m_solver)
@@ -88,6 +93,7 @@ void Engine::shutdown()
 	// Release the input object.
 	if(m_input)
 	{
+		m_input->shutdown();
 		delete m_input;
 		m_input = 0;
 	}
@@ -133,7 +139,11 @@ void Engine::run()
 				done = true;
 			}
 		}
-
+		// Check if the user pressed escape and wants to quit.
+		if(m_input->isEscapePressed() == true)
+		{
+			done = true;
+		}
 	}
 
 	return;
@@ -143,16 +153,26 @@ void Engine::run()
 bool Engine::frame()
 {
 	bool result;
+	int mouseX, mouseY;
 
-
-	// Check if the user pressed escape and wants to exit the application.
-	if(m_input->isKeyDown(VK_ESCAPE))
+	result = m_input->frame();
+	if(!result)
 	{
 		return false;
 	}
 
+	// Get the location of the mouse from the input object,
+	m_input->getMouseLocation(mouseX, mouseY);
+
 	// Do the frame processing for the graphics object.
-	result = m_renderer->frame(m_solver, 0.01f);
+	result = m_renderer->frame(mouseX, mouseY, m_solver, 0.01f);
+	if(!result)
+	{
+		return false;
+	}
+
+	// Render the graphics scene.
+	result = m_renderer->render();
 	if(!result)
 	{
 		return false;
@@ -166,22 +186,6 @@ LRESULT CALLBACK Engine::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 {
 	switch(umsg)
 	{
-		// Check if a key has been pressed on the keyboard.
-		case WM_KEYDOWN:
-		{
-			// If a key is pressed send it to the input object so it can record that state.
-			m_input->keyDown((unsigned int)wparam);
-			return 0;
-		}
-
-		// Check if a key has been released on the keyboard.
-		case WM_KEYUP:
-		{
-			// If a key is released then send it to the input object so it can unset the state for that key.
-			m_input->keyUp((unsigned int)wparam);
-			return 0;
-		}
-
 		// Any other messages send to the default message handler as our application won't make use of them.
 		default:
 		{
@@ -267,7 +271,7 @@ void Engine::initializeWindows(int& screenWidth, int& screenHeight)
 	SetFocus(m_hwnd);
 
 	// Hide the mouse cursor.
-	ShowCursor(false);
+	ShowCursor(true);
 
 	return;
 }

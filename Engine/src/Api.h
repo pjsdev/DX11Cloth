@@ -9,4 +9,9 @@ typedef D3DXVECTOR4 Vec4;
 
 typedef D3DXMATRIX Matrix;
 
+inline void makeIdentity(Matrix &_mat)
+{
+	D3DXMatrixIdentity(&_mat);
+}
+
 #endif

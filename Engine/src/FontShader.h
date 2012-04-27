@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: textureshaderclass.h
+// Filename: fontshaderclass.h
 // based on code from http://www.rastertek.com/tutdx11.html April 2012
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _TEXTURESHADERCLASS_H_
-#define _TEXTURESHADERCLASS_H_
+#ifndef _FONTSHADERCLASS_H_
+#define _FONTSHADERCLASS_H_
 
 
 //////////////
@@ -13,63 +13,51 @@
 #include <d3dx10math.h>
 #include <d3dx11async.h>
 #include <fstream>
-#include "Api.h"
+using namespace std;
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: TextureShaderClass
+// Class name: FontShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class TextureShader
+class FontShader
 {
 private:
-	struct MatrixBufferType
+	struct ConstantBufferType
 	{
-		Matrix world;
-		Matrix view;
-		Matrix projection;
+		D3DXMATRIX world;
+		D3DXMATRIX view;
+		D3DXMATRIX projection;
 	};
 
-	struct CameraBufferType
+	struct PixelBufferType
 	{
-		Vec3 cameraPosition;
-		float padding;
-	};
-
-	//make sure we're 16 bit aligned for createBuffer()
-	struct LightBufferType
-	{
-		Vec4 ambientColor;
-		Vec4 diffuseColor;
-		Vec3 lightDir;
-		float specularPower;
-		Vec4 specularColor;
+		D3DXVECTOR4 pixelColor;
 	};
 
 public:
-	TextureShader();
-	TextureShader(const TextureShader&);
-	~TextureShader();
+	FontShader();
+	FontShader(const FontShader&);
+	~FontShader();
 
 	bool initialize(ID3D11Device*, HWND);
 	void shutdown();
-	bool render(ID3D11DeviceContext*, int, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
+	bool render(ID3D11DeviceContext*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, D3DXVECTOR4);
 
 private:
 	bool initializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	void shutdownShader();
 	void outputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool setShaderParameters(ID3D11DeviceContext*, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float, Vec4, Vec3);
+	bool setShaderParameters(ID3D11DeviceContext*, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, ID3D11ShaderResourceView*, D3DXVECTOR4);
 	void renderShader(ID3D11DeviceContext*, int);
 
 private:
 	ID3D11VertexShader* m_vertexShader;
 	ID3D11PixelShader* m_pixelShader;
 	ID3D11InputLayout* m_layout;
-	ID3D11Buffer* m_matrixBuffer;
-	ID3D11Buffer* m_cameraBuffer;
-	ID3D11Buffer* m_lightBuffer;
+	ID3D11Buffer* m_constantBuffer;
 	ID3D11SamplerState* m_sampleState;
+	ID3D11Buffer* m_pixelBuffer;
 };
 
 #endif

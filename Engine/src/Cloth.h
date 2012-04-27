@@ -33,6 +33,7 @@ namespace pjs
 		void render(ID3D11DeviceContext*);
 		int getIndexCount();
 		ID3D11ShaderResourceView* getTexture();
+		void getTranformationMatrix(Matrix &_mat);
 	private:
 		bool loadTexture(ID3D11Device*, WCHAR*);
 		void releaseTexture();
@@ -45,10 +46,12 @@ namespace pjs
 		void initializeStructSprings();
 		void intializeParticles();
 
-		void calculateSpringForce(Spring &_spring);
+		void calculateSpringForce(Spring &_spring);	
 		void accumulateForces(Solver* _solver);
 
 		Texture* m_texture;
+
+		Matrix m_transformationMatrix;
 
 		ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 		int m_vertexCount, m_indexCount;

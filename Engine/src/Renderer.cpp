@@ -14,6 +14,7 @@ Renderer::Renderer()
 	m_tessellationShader = 0;
 	m_cloth = 0;
 	m_light = 0;
+	m_text = 0;
 }
 
 
@@ -30,7 +31,7 @@ Renderer::~Renderer()
 bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
-
+	Matrix baseViewMatrix;
 
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
@@ -55,10 +56,28 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->setPosition(-1.0f, -14.0f, -20.0f);
+	m_camera->setPosition(-1.0f, -40.0f, -90.0f);
+	m_camera->render();
+	m_camera->getViewMatrix(baseViewMatrix);
+
+
+	// Create the text object.
+	m_text = new Text;
+	if(!m_text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = m_text->initialize(m_D3D->getDevice(), m_D3D->getDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the model object.
-	m_cloth = new Cloth(7,5,3.0f);
+	m_cloth = new Cloth(20,15,3.0f);
 	if(!m_cloth)
 	{
 		return false;
@@ -110,8 +129,8 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	m_light->setAmbientColor(0.5f,0.5f,0.5f,1.0f);
-	m_light->setDiffuseColor(0.7f,0.7f,0.7f,1.0f);
-	m_light->setDirection(0.5f,0.0f,0.5f);
+	m_light->setDiffuseColor(1.7f,1.7f,1.7f,1.0f);
+	m_light->setDirection(0.5f,0.3f,0.3f);
 	m_light->setSpecularColor(0.3f,0.3f,0.3f,1.0f);
 	m_light->setSpecularPower(4.0f);
 
@@ -121,6 +140,14 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void Renderer::shutdown()
 {
+	// Release the text object.
+	if(m_text)
+	{
+		m_text->shutdown();
+		delete m_text;
+		m_text = 0;
+	}
+
 	//release the light
 	if(m_light)
 	{
@@ -170,35 +197,28 @@ void Renderer::shutdown()
 }
 
 
-bool Renderer::frame(pjs::Solver* _solver, float _timeStep)
+bool Renderer::frame(int _mouseX, int _mouseY, pjs::Solver* _solver, float _timeStep)
 {
 	bool result;
 
-	static float rotation = 0.0f;
-
-	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.001f;
-	if(rotation > 360.0f)
-	{
-		rotation -= 360.0f;
-	}
-
-	m_cloth->frame(_solver, _timeStep, m_D3D->getDeviceContext());
-	// Render the graphics scene.
-	result = render(rotation);
+	result = m_text->setMousePosition(_mouseX, _mouseY, m_D3D->getDeviceContext());
 	if(!result)
 	{
 		return false;
 	}
 
+	m_cloth->frame(_solver, _timeStep, m_D3D->getDeviceContext());
+
 	return true;
 }
 
 
-bool Renderer::render(float _rotation)
+bool Renderer::render()
 {
-	Matrix worldMatrix, viewMatrix, projectionMatrix;
+	Matrix worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	bool result;
+
+	Matrix yRot, zRot;
 
 	// Clear the buffers to begin the scene.
 	m_D3D->beginScene(0.4f, 0.4f, 0.4f, 1.0f);
@@ -210,26 +230,40 @@ bool Renderer::render(float _rotation)
 	m_camera->getViewMatrix(viewMatrix);
 	m_D3D->getWorldMatrix(worldMatrix);
 	m_D3D->getProjectionMatrix(projectionMatrix);
+	m_D3D->getOrthoMatrix(orthoMatrix);
 
-	// Rotate the world matrix by the rotation value so that the triangle will spin.
-	D3DXMatrixRotationY(&worldMatrix, _rotation);
+	m_D3D->turnZBufferOff();
+	// Turn on the alpha blending before rendering the text.
+	m_D3D->turnOnAlphaBlending();
+	// Render the text strings.
+	result = m_text->render(m_D3D->getDeviceContext(), worldMatrix, orthoMatrix);
+	if(!result)
+	{
+		return false;
+	}
+
+	// Turn off alpha blending after rendering the text.
+	m_D3D->turnOffAlphaBlending();
+	// Turn the Z buffer back on now that all 2D rendering has completed.
+	m_D3D->turnZBufferOn();
+
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_cloth->render(m_D3D->getDeviceContext());
 
 	// Render the model using the color shader.
-	//result = m_textureShader->render(
-	//	m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
-	//	worldMatrix, viewMatrix, projectionMatrix, 
-	//	m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
-	//	m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
-
-	result = m_tessellationShader->render(
+	result = m_textureShader->render(
 		m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
 		worldMatrix, viewMatrix, projectionMatrix, 
-		m_cloth->getTexture(), m_light->getAmbientColor(), 
-		m_light->getDiffuseColor(), m_light->getDirection(),
-		12.0f);
+		m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
+		m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
+
+	//result = m_tessellationShader->render(
+	//	m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
+	//	worldMatrix, viewMatrix, projectionMatrix, 
+	//	m_cloth->getTexture(), m_light->getAmbientColor(), 
+	//	m_light->getDiffuseColor(), m_light->getDirection(),
+	//	14.0f);
 
 	if(!result)
 	{

@@ -1,12 +1,32 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: Input.h
+// Filename: inputclass.h
+// based on code from http://www.rastertek.com/tutdx11.html April 2012
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef _Input_H_
-#define _Input_H_
+#ifndef _INPUTCLASS_H_
+#define _INPUTCLASS_H_
+
+
+///////////////////////////////
+// PRE-PROCESSING DIRECTIVES //
+///////////////////////////////
+#define DIRECTINPUT_VERSION 0x0800
+
+
+/////////////
+// LINKING //
+/////////////
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+
+
+//////////////
+// INCLUDES //
+//////////////
+#include <dinput.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: Input
+// Class name: InputClass
 ////////////////////////////////////////////////////////////////////////////////
 class Input
 {
@@ -15,15 +35,28 @@ public:
 	Input(const Input&);
 	~Input();
 
-	void initialize();
+	bool initialize(HINSTANCE, HWND, int, int);
+	void shutdown();
+	bool frame();
 
-	void keyDown(unsigned int);
-	void keyUp(unsigned int);
-
-	bool isKeyDown(unsigned int);
+	bool isEscapePressed();
+	void getMouseLocation(int&, int&);
 
 private:
-	bool m_keys[256];
+	bool readKeyboard();
+	bool readMouse();
+	void processInput();
+
+private:
+	IDirectInput8* m_directInput;
+	IDirectInputDevice8* m_keyboard;
+	IDirectInputDevice8* m_mouse;
+
+	unsigned char m_keyboardState[256];
+	DIMOUSESTATE m_mouseState;
+
+	int m_screenWidth, m_screenHeight;
+	int m_mouseX, m_mouseY;
 };
 
 #endif

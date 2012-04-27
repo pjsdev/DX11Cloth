@@ -1,5 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: d3dclass.h
+// based on code from http://www.rastertek.com/tutdx11.html April 2012
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef _D3DCLASS_H_
 #define _D3DCLASS_H_
@@ -50,6 +51,12 @@ public:
 
 	void getVideoCardInfo(char*, int&);
 
+	void turnZBufferOn();
+	void turnZBufferOff();
+
+	void turnOnAlphaBlending();
+	void turnOffAlphaBlending();
+
 private:
 	bool m_vsync_enabled;
 	int m_videoCardMemory;
@@ -65,6 +72,11 @@ private:
 	Matrix m_projectionMatrix;
 	Matrix m_worldMatrix;
 	Matrix m_orthoMatrix;
+	
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
+
+	ID3D11BlendState* m_alphaEnableBlendingState;
+	ID3D11BlendState* m_alphaDisableBlendingState;
 };
 
 #endif
