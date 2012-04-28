@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "TextureShader.h"
 
+using namespace pjs;
 
 TextureShader::TextureShader()
 {
@@ -53,9 +54,9 @@ void TextureShader::shutdown()
 
 bool TextureShader::render(
 	ID3D11DeviceContext* deviceContext, int indexCount, 
-	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
-	float _specPow, Vec4 _specColor, Vec3 _camPos
+	Matrix modelMatrix, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
+	ID3D11ShaderResourceView* texture, pjs::Vec4 _ambientColor, pjs::Vec4 _lightColor, pjs::Vec3 _lightDirection,
+	float _specPow, pjs::Vec4 _specColor, pjs::Vec3 _camPos
 	)
 {
 	bool result;
@@ -63,7 +64,7 @@ bool TextureShader::render(
 
 	// Set the shader parameters that it will use for rendering.
 	result = setShaderParameters(
-		deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
+		deviceContext, modelMatrix, worldMatrix, viewMatrix, projectionMatrix, 
 		texture, _ambientColor, _lightColor, _lightDirection,
 		_specPow, _specColor, _camPos);
 	if(!result)
@@ -356,9 +357,9 @@ void TextureShader::outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd
 
 bool TextureShader::setShaderParameters(
 	ID3D11DeviceContext* deviceContext, 
-	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* texture, Vec4 _ambientColor, Vec4 _lightColor, Vec3 _lightDirection,
-	float _specPow, Vec4 _specColor, Vec3 _camPos
+	Matrix modelMatrix, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
+	ID3D11ShaderResourceView* texture, pjs::Vec4 _ambientColor, pjs::Vec4 _lightColor, pjs::Vec3 _lightDirection,
+	float _specPow, pjs::Vec4 _specColor, pjs::Vec3 _camPos
 	)
 {
 	HRESULT result;
@@ -370,6 +371,7 @@ bool TextureShader::setShaderParameters(
 
 
 	// Transpose the matrices to prepare them for the shader.
+	D3DXMatrixTranspose(&modelMatrix, &modelMatrix);
 	D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
 	D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
 	D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
@@ -385,6 +387,7 @@ bool TextureShader::setShaderParameters(
 	matData = (MatrixBufferType*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
+	matData->model = modelMatrix;
 	matData->world = worldMatrix;
 	matData->view = viewMatrix;
 	matData->projection = projectionMatrix;

@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "TessellationShader.h"
 
+using namespace pjs;
 
 TessellationShader::TessellationShader()
 {
@@ -58,8 +59,8 @@ void TessellationShader::shutdown()
 bool TessellationShader::render(
 	ID3D11DeviceContext* deviceContext, int indexCount, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* Tessellation, Vec4 _ambientColor, Vec4 _lightColor, 
-	Vec3 _lightDirection, float _tesssellationAmount
+	ID3D11ShaderResourceView* Tessellation, pjs::Vec4 _ambientColor, pjs::Vec4 _lightColor, 
+	pjs::Vec3 _lightDirection, float _tesssellationAmount
 	)
 {
 	bool result;
@@ -442,8 +443,8 @@ void TessellationShader::outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 bool TessellationShader::setShaderParameters(
 	ID3D11DeviceContext* deviceContext, 
 	Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, 
-	ID3D11ShaderResourceView* Tessellation, Vec4 _ambientColor, Vec4 _lightColor, 
-	Vec3 _lightDirection, float _tessellationAmount
+	ID3D11ShaderResourceView* Tessellation, pjs::Vec4 _ambientColor, pjs::Vec4 _lightColor, 
+	pjs::Vec3 _lightDirection, float _tessellationAmount
 	)
 {
 	HRESULT result;
@@ -522,7 +523,7 @@ bool TessellationShader::setShaderParameters(
 
 	// Copy the tessellation data into the constant buffer.
 	tessData->tessellationAmount = _tessellationAmount;
-	tessData->padding = Vec3(0.0f, 0.0f, 0.0f);
+	tessData->padding = pjs::Vec3(0.0f, 0.0f, 0.0f);
 
 	// Unlock the tessellation constant buffer.
 	deviceContext->Unmap(m_tessellationBuffer, 0);

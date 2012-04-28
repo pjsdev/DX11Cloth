@@ -33,6 +33,10 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 	Matrix baseViewMatrix;
 
+	m_zoom = 0.0f;
+	m_rotY = 0.0f;
+	m_rotX = 0.0f;
+
 	// Create the Direct3D object.
 	m_D3D = new D3DClass;
 	if(!m_D3D)
@@ -56,7 +60,7 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_camera->setPosition(-1.0f, -40.0f, -90.0f);
+	m_camera->setPosition(0.0f, -15.0f, -90.0f);
 	m_camera->render();
 	m_camera->getViewMatrix(baseViewMatrix);
 
@@ -82,7 +86,6 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-
 	// Initialize the model object.
 	result = m_cloth->initialize(m_D3D->getDevice(), L"../Engine/textures/ukFlag.jpg");
 	if(!result)
@@ -90,6 +93,8 @@ bool Renderer::initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the cloth object.", L"Error", MB_OK);
 		return false;
 	}
+
+
 
 	// Create the color shader object.
 	m_textureShader = new TextureShader;
@@ -197,7 +202,7 @@ void Renderer::shutdown()
 }
 
 
-bool Renderer::frame(int _mouseX, int _mouseY, pjs::Solver* _solver, float _timeStep)
+bool Renderer::frame(int _mouseX, int _mouseY, int _mouseZ, pjs::Solver* _solver, float _timeStep)
 {
 	bool result;
 
@@ -207,31 +212,22 @@ bool Renderer::frame(int _mouseX, int _mouseY, pjs::Solver* _solver, float _time
 		return false;
 	}
 
+	m_zoom = -(float)_mouseZ / 12.0f;
+	m_rotY = -(float)_mouseX / 12.0f;
+	m_rotX = -(float)_mouseY / 12.0f;
+
 	m_cloth->frame(_solver, _timeStep, m_D3D->getDeviceContext());
 
 	return true;
 }
 
-
-bool Renderer::render()
+bool Renderer::renderUI()
 {
-	Matrix worldMatrix, viewMatrix, projectionMatrix, orthoMatrix;
 	bool result;
-
-	Matrix yRot, zRot;
-
-	// Clear the buffers to begin the scene.
-	m_D3D->beginScene(0.4f, 0.4f, 0.4f, 1.0f);
-
-	// Generate the view matrix based on the camera's position.
-	m_camera->render();
-
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	m_camera->getViewMatrix(viewMatrix);
-	m_D3D->getWorldMatrix(worldMatrix);
-	m_D3D->getProjectionMatrix(projectionMatrix);
+	Matrix worldMatrix;
+	matMakeIdentity(worldMatrix);
+	Matrix orthoMatrix;
 	m_D3D->getOrthoMatrix(orthoMatrix);
-
 	m_D3D->turnZBufferOff();
 	// Turn on the alpha blending before rendering the text.
 	m_D3D->turnOnAlphaBlending();
@@ -241,22 +237,50 @@ bool Renderer::render()
 	{
 		return false;
 	}
-
 	// Turn off alpha blending after rendering the text.
 	m_D3D->turnOffAlphaBlending();
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	m_D3D->turnZBufferOn();
 
+	return true;
+}
+
+bool Renderer::render()
+{
+	Matrix modelMatrix, viewMatrix, projectionMatrix, worldMatrix;
+	bool result;
+
+	// Clear the buffers to begin the scene.
+	m_D3D->beginScene(0.4f, 0.4f, 0.4f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	m_camera->render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	m_camera->getViewMatrix(viewMatrix);
+	m_D3D->getProjectionMatrix(projectionMatrix);
+	m_D3D->getWorldMatrix(worldMatrix);
+
+	if(!renderUI())
+	{
+		return false;
+	}
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	m_cloth->render(m_D3D->getDeviceContext());
+	m_cloth->getModelMatrix(modelMatrix);
+
+	Matrix tmp;
+	D3DXMatrixMultiply(&modelMatrix, &modelMatrix, D3DXMatrixTranslation(&tmp, 0.0f,0.0f,m_zoom));
 
 	// Render the model using the color shader.
 	result = m_textureShader->render(
 		m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 
-		worldMatrix, viewMatrix, projectionMatrix, 
-		m_cloth->getTexture(), m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
-		m_light->getSpecularPower(),m_light->getSpecularColor(), m_camera->getPosition());
+		modelMatrix, worldMatrix, viewMatrix, projectionMatrix, 
+		m_cloth->getTexture(), 
+		m_light->getAmbientColor(), m_light->getDiffuseColor(), m_light->getDirection(),
+		m_light->getSpecularPower(),m_light->getSpecularColor(),
+		m_camera->getPosition());
 
 	//result = m_tessellationShader->render(
 	//	m_D3D->getDeviceContext(), m_cloth->getIndexCount(), 

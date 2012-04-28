@@ -31,6 +31,9 @@
 class Input
 {
 public:
+
+	enum mouseButtons{LEFT = 0, RIGHT, MIDDLE};
+
 	Input();
 	Input(const Input&);
 	~Input();
@@ -40,8 +43,8 @@ public:
 	bool frame();
 
 	bool isEscapePressed();
-	void getMouseLocation(int&, int&);
-
+	void getMouseLocation(int&, int&, int&);
+	bool isMouseButtonDown(int _button)const;
 private:
 	bool readKeyboard();
 	bool readMouse();
@@ -56,7 +59,7 @@ private:
 	DIMOUSESTATE m_mouseState;
 
 	int m_screenWidth, m_screenHeight;
-	int m_mouseX, m_mouseY;
+	int m_mouseX, m_mouseY, m_mouseZ;
 };
 
 #endif

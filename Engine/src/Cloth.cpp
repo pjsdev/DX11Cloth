@@ -28,6 +28,12 @@ void Cloth::frame(Solver* _solver, float _timeStep, ID3D11DeviceContext* _contex
 	updateBuffers(_context);
 }
 
+void Cloth::getModelMatrix(Matrix &_mat)
+{
+	_mat = m_modelMatrix;
+	return;
+}
+
 void Cloth::updateBuffers(ID3D11DeviceContext* _context)
 {
 	std::vector<VertexType> vertData;
@@ -38,7 +44,7 @@ void Cloth::updateBuffers(ID3D11DeviceContext* _context)
     float sProportion = 1.0f/(float)m_width;
     float tProportion = 1.0f/(float)m_height;
 
-	Vec3 normal;
+	pjs::Vec3 normal;
 	for(int i = 0; i < m_vertexCount; ++i)
 	{
 		VertexType tmp;
@@ -56,7 +62,7 @@ void Cloth::updateBuffers(ID3D11DeviceContext* _context)
             s+=1.0f;
         }
 
-		Vec3 v2Out, v1Out, v1, v2;
+		pjs::Vec3 v2Out, v1Out, v1, v2;
 		bool flip = false;
 		if(i + m_width < m_width*m_height)
         {
@@ -108,16 +114,13 @@ void Cloth::updateBuffers(ID3D11DeviceContext* _context)
 
 }
 
-void Cloth::getTranformationMatrix(Matrix &_mat)
-{
-	_mat = m_transformationMatrix;
-	return;
-}
-
 bool Cloth::initialize(ID3D11Device* _device, WCHAR* _textureFilename)
 {
 	bool result;
 	// Load the texture for this model.
+
+	matMakeIdentity(m_modelMatrix);
+
 	result = loadTexture(_device, _textureFilename);
 	if(!result)
 	{
@@ -222,7 +225,7 @@ bool Cloth::initializeBuffers(ID3D11Device* _device)
 	for(int i = 0; i < m_vertexCount; ++i)
 	{
 		vertices[i].position = m_particles[i].pos;
-		vertices[i].normal = Vec3(0,0,0);
+		vertices[i].normal = pjs::Vec3(0,0,0);
 		vertices[i].tex = Vec2(0,0);
 	}
 
@@ -355,7 +358,7 @@ void Cloth::initializeBendSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+2];
 
-			Vec3 dist = s.p1->pos - s.p2->pos;
+			pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
@@ -371,7 +374,7 @@ void Cloth::initializeBendSprings()
 		s.p1 = &m_particles[i];
 		s.p2 = &m_particles[i+(m_width*2)];
 
-		Vec3 dist = s.p1->pos - s.p2->pos;
+		pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 
 		s.restLength = D3DXVec3Length(&dist);
 		s.damping = 100.0f;
@@ -391,11 +394,11 @@ void Cloth::initializeShearSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+(m_width+1)];
 
-			Vec3 dist = s.p1->pos - s.p2->pos;
+			pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
-			s.stiffness = 230.0f;
+			s.stiffness = 50.0f;
 			m_shearSprings.push_back(s);
 		}
 	}
@@ -409,11 +412,11 @@ void Cloth::initializeShearSprings()
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i-(m_width-1)];
 
-			Vec3 dist = s.p1->pos - s.p2->pos;
+			pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
-			s.stiffness = 230.0f;
+			s.stiffness = 50.0f;
 			m_shearSprings.push_back(s);
 		}
 	}
@@ -427,10 +430,10 @@ void Cloth::initializeStructSprings()
 			Spring s;
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+1];
-			Vec3 dist = s.p1->pos - s.p2->pos;
+			pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
-			s.stiffness = 230.0f;
+			s.stiffness = 50.0f;
 			m_structSprings.push_back(s);
 		}
 	}
@@ -442,10 +445,10 @@ void Cloth::initializeStructSprings()
 			Spring s;
 			s.p1 = &m_particles[i];
 			s.p2 = &m_particles[i+m_width];
-			Vec3 dist = s.p1->pos - s.p2->pos;
+			pjs::Vec3 dist = s.p1->pos - s.p2->pos;
 			s.restLength = D3DXVec3Length(&dist);
 			s.damping = 100.0f;
-			s.stiffness = 230.0f;
+			s.stiffness = 50.0f;
 			m_structSprings.push_back(s);
 		}
 	}
@@ -456,11 +459,11 @@ void Cloth::intializeParticles()
 	float x = (-((float)m_width)*0.5f)*m_spacing;
 	for(unsigned int i = 0; i < m_particles.size(); i++)
 	{
-		m_particles[i].pos = Vec3(x, y,0.0);
-		m_particles[i].lastPos = Vec3(x, y,0.0);
+		m_particles[i].pos = pjs::Vec3(x, 0.0,y);
+		m_particles[i].lastPos = pjs::Vec3(x, 0.0,y);
 
-		m_particles[i].velocity = Vec3(.0f, .0f, .0f);
-		m_particles[i].acceleration = Vec3(.0f, .0f, .0f);
+		m_particles[i].velocity = pjs::Vec3(.0f, .0f, .0f);
+		m_particles[i].acceleration = pjs::Vec3(.0f, .0f, .0f);
 		m_particles[i].mass = 1.0;
 		m_particles[i].isConstrained = false;
 		m_particles[i].id = i;

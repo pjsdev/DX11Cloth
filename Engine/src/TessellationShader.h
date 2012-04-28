@@ -24,23 +24,23 @@ class TessellationShader
 private:
 	struct MatrixBufferType
 	{
-		Matrix world;
-		Matrix view;
-		Matrix projection;
+		pjs::Matrix world;
+		pjs::Matrix view;
+		pjs::Matrix projection;
 	};
 
 	struct TessellationBufferType
 	{
 		float tessellationAmount;
-		Vec3 padding;
+		pjs::Vec3 padding;
 	};
 
 	//make sure we're 16 bit aligned for createBuffer()
 	struct LightBufferType
 	{
-		Vec4 ambientColor;
-		Vec4 diffuseColor;
-		Vec3 lightDir;
+		pjs::Vec4 ambientColor;
+		pjs::Vec4 diffuseColor;
+		pjs::Vec3 lightDir;
 		float padding;
 	};
 
@@ -51,14 +51,14 @@ public:
 
 	bool initialize(ID3D11Device*, HWND);
 	void shutdown();
-	bool render(ID3D11DeviceContext*, int, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float);
+	bool render(ID3D11DeviceContext*, int, pjs::Matrix, pjs::Matrix, pjs::Matrix, ID3D11ShaderResourceView*, pjs::Vec4, pjs::Vec4, pjs::Vec3, float);
 
 private:
 	bool initializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*, WCHAR*, WCHAR*);
 	void shutdownShader();
 	void outputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	bool setShaderParameters(ID3D11DeviceContext*, Matrix, Matrix, Matrix, ID3D11ShaderResourceView*, Vec4, Vec4, Vec3, float);
+	bool setShaderParameters(ID3D11DeviceContext*, pjs::Matrix, pjs::Matrix, pjs::Matrix, ID3D11ShaderResourceView*, pjs::Vec4, pjs::Vec4, pjs::Vec3, float);
 	void renderShader(ID3D11DeviceContext*, int);
 
 private:

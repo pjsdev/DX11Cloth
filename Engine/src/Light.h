@@ -27,17 +27,17 @@ public:
 	void setDirection(float, float, float);
 	void setSpecularPower(float);
 
-	Vec4 getSpecularColor();
+	pjs::Vec4 getSpecularColor();
 	float getSpecularPower();
-	Vec4 getAmbientColor();
-	Vec4 getDiffuseColor();
-	Vec3 getDirection();
+	pjs::Vec4 getAmbientColor();
+	pjs::Vec4 getDiffuseColor();
+	pjs::Vec3 getDirection();
 
 private:
-	Vec4 m_ambientColor;
-	Vec4 m_specularColor;
-	Vec4 m_diffuseColor;
-	Vec3 m_direction;
+	pjs::Vec4 m_ambientColor;
+	pjs::Vec4 m_specularColor;
+	pjs::Vec4 m_diffuseColor;
+	pjs::Vec3 m_direction;
 	float m_specularPower;
 };
 

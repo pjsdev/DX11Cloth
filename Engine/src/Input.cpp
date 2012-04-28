@@ -34,6 +34,7 @@ bool Input::initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int scre
 	// Initialize the location of the mouse on the screen.
 	m_mouseX = 0;
 	m_mouseY = 0;
+	m_mouseZ = 0;
 
 	// Initialize the main direct input interface.
 	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
@@ -167,6 +168,15 @@ bool Input::frame()
 	return true;
 }
 
+bool Input::isMouseButtonDown(int _button)const
+{
+	if(m_mouseState.rgbButtons[_button] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
 
 bool Input::readKeyboard()
 {
@@ -196,7 +206,6 @@ bool Input::readMouse()
 {
 	HRESULT result;
 
-
 	// Read the mouse device.
 	result = m_mouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&m_mouseState);
 	if(FAILED(result))
@@ -221,6 +230,7 @@ void Input::processInput()
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
 	m_mouseX += m_mouseState.lX;
 	m_mouseY += m_mouseState.lY;
+	m_mouseZ += m_mouseState.lZ;
 
 	// Ensure the mouse location doesn't exceed the screen width or height.
 	if(m_mouseX < 0)  { m_mouseX = 0; }
@@ -245,9 +255,10 @@ bool Input::isEscapePressed()
 }
 
 
-void Input::getMouseLocation(int& mouseX, int& mouseY)
+void Input::getMouseLocation(int& mouseX, int& mouseY, int& mouseZ)
 {
 	mouseX = m_mouseX;
 	mouseY = m_mouseY;
+	mouseZ = m_mouseZ;
 	return;
 }

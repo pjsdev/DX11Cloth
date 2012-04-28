@@ -45,9 +45,9 @@ public:
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getDeviceContext();
 
-	void getProjectionMatrix(Matrix&);
-	void getWorldMatrix(Matrix&);
-	void getOrthoMatrix(Matrix&);
+	void getProjectionMatrix(pjs::Matrix&);
+	void getWorldMatrix(pjs::Matrix&);
+	void getOrthoMatrix(pjs::Matrix&);
 
 	void getVideoCardInfo(char*, int&);
 
@@ -69,9 +69,9 @@ private:
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11RasterizerState* m_rasterState;
-	Matrix m_projectionMatrix;
-	Matrix m_worldMatrix;
-	Matrix m_orthoMatrix;
+	pjs::Matrix m_projectionMatrix;
+	pjs::Matrix m_worldMatrix;
+	pjs::Matrix m_orthoMatrix;
 	
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
 

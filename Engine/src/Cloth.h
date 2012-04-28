@@ -17,8 +17,8 @@ namespace pjs
 	private:
 		struct VertexType
 		{
-			Vec3 position;
-			Vec3 normal;
+			pjs::Vec3 position;
+			pjs::Vec3 normal;
 			Vec2 tex;
 		};
 	public:
@@ -33,7 +33,7 @@ namespace pjs
 		void render(ID3D11DeviceContext*);
 		int getIndexCount();
 		ID3D11ShaderResourceView* getTexture();
-		void getTranformationMatrix(Matrix &_mat);
+		void getModelMatrix(Matrix &_mat);
 	private:
 		bool loadTexture(ID3D11Device*, WCHAR*);
 		void releaseTexture();
@@ -63,6 +63,8 @@ namespace pjs
 		std::vector<Spring> m_shearSprings;
 		std::vector<Spring> m_bendSprings;
 		std::vector<Spring> m_structSprings;
+
+		Matrix m_modelMatrix;
 	};
 }
 #endif

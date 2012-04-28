@@ -30,12 +30,12 @@ public:
 	D3DXVECTOR3 getRotation();
 
 	void render();
-	void getViewMatrix(Matrix&);
+	void getViewMatrix(pjs::Matrix&);
 
 private:
 	float m_positionX, m_positionY, m_positionZ;
 	float m_rotationX, m_rotationY, m_rotationZ;
-	Matrix m_viewMatrix;
+	pjs::Matrix m_viewMatrix;
 };
 
 #endif

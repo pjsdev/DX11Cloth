@@ -40,12 +40,18 @@ public:
 
 	bool initialize(int, int, HWND);
 	void shutdown();
-	bool frame(int, int, pjs::Solver* _solver, float _timeStep);
+	bool frame(int, int, int, pjs::Solver* _solver, float _timeStep);
 
 	inline pjs::Cloth* cloth(){return m_cloth;}
 
+	inline void moveMode(float _mode)
+	{
+		m_moveMode = _mode;
+	}
+
 	bool render();
 private:
+	bool renderUI();
 	D3DClass* m_D3D;
 	Camera* m_camera;
 	pjs::Cloth* m_cloth;
@@ -53,6 +59,8 @@ private:
 	TessellationShader* m_tessellationShader;
 	Light* m_light;
 	Text* m_text;
+	float m_zoom, m_rotY, m_rotX;
+	float m_moveMode;
 };
 
 #endif

@@ -59,8 +59,8 @@ bool Engine::initialize()
 
 	// Initialize the input object.
 	m_solver->initialize();
-	m_solver->addForce("gravity", Vec3(0.0f,-7.0f,0.5f));
-	m_solver->addForce("wind", Vec3(4.0f,1.0f,1.5f));
+	m_solver->addForce("gravity", pjs::Vec3(0.0f,-7.0f,0.5f));
+	//m_solver->addForce("wind", pjs::Vec3(4.0f,1.0f,1.5f));
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	m_renderer = new Renderer;
@@ -153,7 +153,7 @@ void Engine::run()
 bool Engine::frame()
 {
 	bool result;
-	int mouseX, mouseY;
+	int mouseX, mouseY, mouseZ;
 
 	result = m_input->frame();
 	if(!result)
@@ -162,10 +162,19 @@ bool Engine::frame()
 	}
 
 	// Get the location of the mouse from the input object,
-	m_input->getMouseLocation(mouseX, mouseY);
+	m_input->getMouseLocation(mouseX, mouseY, mouseZ);
+
+	if(m_input->isMouseButtonDown(m_input->LEFT))
+	{
+		m_renderer->moveMode(1.0f);
+	}
+	else
+	{
+		m_renderer->moveMode(0.0f);
+	}
 
 	// Do the frame processing for the graphics object.
-	result = m_renderer->frame(mouseX, mouseY, m_solver, 0.01f);
+	result = m_renderer->frame(mouseX, mouseY, mouseZ, m_solver, 0.01f);
 	if(!result)
 	{
 		return false;

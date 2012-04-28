@@ -20,26 +20,26 @@ Light::~Light()
 
 void Light::setSpecularColor(float red, float green, float blue, float alpha)
 {
-	m_specularColor = Vec4(red, green, blue, alpha);
+	m_specularColor = pjs::Vec4(red, green, blue, alpha);
 	return;
 }
 
 void Light::setDiffuseColor(float red, float green, float blue, float alpha)
 {
-	m_diffuseColor = Vec4(red, green, blue, alpha);
+	m_diffuseColor = pjs::Vec4(red, green, blue, alpha);
 	return;
 }
 
 
 void Light::setAmbientColor(float red, float green, float blue, float alpha)
 {
-	m_ambientColor = Vec4(red, green, blue, alpha);
+	m_ambientColor = pjs::Vec4(red, green, blue, alpha);
 	return;
 }
 
 void Light::setDirection(float x, float y, float z)
 {
-	m_direction = Vec3(x, y, z);
+	m_direction = pjs::Vec3(x, y, z);
 	return;
 }
 
@@ -54,23 +54,23 @@ float Light::getSpecularPower()
 	return m_specularPower;
 }
 
-Vec4 Light::getSpecularColor()
+pjs::Vec4 Light::getSpecularColor()
 {
 	return m_specularColor;
 }
 
-Vec4 Light::getAmbientColor()
+pjs::Vec4 Light::getAmbientColor()
 {
 	return m_ambientColor;
 }
 
-Vec4 Light::getDiffuseColor()
+pjs::Vec4 Light::getDiffuseColor()
 {
 	return m_diffuseColor;
 }
 
 
-Vec3 Light::getDirection()
+pjs::Vec3 Light::getDirection()
 {
 	return m_direction;
 }
